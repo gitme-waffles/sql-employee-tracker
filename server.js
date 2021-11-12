@@ -83,11 +83,11 @@ function addDept() {
 }
 
 function addRole() {
-  const sql = `SELECT 
-  *
-  FROM department`;
   inquirer.prompt(prompts.addRole).then((answers) => {
-    const addRoleData = answers;
+    const addRoleData = answers; // to be inserted into database
+    const sql = `SELECT 
+    *
+    FROM department`;
     db.query(sql, (err, result) => {
       // const table = cTable.getTable(result);
       // result.forEach((element) => {
@@ -98,7 +98,8 @@ function addRole() {
         console.error(err);
       } else {
         const dbDeptList = result.map(element => element.name);
-        // console.log(dbDeptList);
+        console.log(`ConLog dbDepList: ` + dbDeptList);
+        console.log(`ConLog query result: ` + result.id);
         // console.log(table);
         
         inquirer.prompt([{
@@ -108,7 +109,10 @@ function addRole() {
             choices: dbDeptList,
           }]).then((answers) => {
               console.log(answers);
+              // answers.roleUnderDept = chosen role
               console.log(addRoleData);
+              // addRoleData.newRoleName
+              // addRoleData.newRoleSalary
               mainMenu();
             })
             
@@ -118,6 +122,22 @@ function addRole() {
 }
 
 function addEmployee() {}
+
+function updateEmployeeRole() {
+	// CONCAT(E.first_name, " ", E.last_name)
+  const sql = `SELECT *
+FROM employee AS E;`
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const listOfEmployees = result.map(element => element)
+      console.log("ConLog db reulst: " + result);
+      console.log(listOfEmployees);
+
+    }
+  })
+}
 
 function mainMenu() {
   inquirer.prompt(prompts.menu).then((answers) => {
@@ -140,6 +160,9 @@ function mainMenu() {
         break;
       case "Add an employee":
         addEmployee()
+        break;        
+      case "Update an employees role":
+        updateEmployeeRole()
         break;        
           case "Exit":
             console.log("Bye!");

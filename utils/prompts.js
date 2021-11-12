@@ -2,7 +2,7 @@ menu = [
   {
     type: "list",
     name: "menuOption",
-    message: "Select an option",
+    message: "What would you like to do?",
     choices: [
       "View all departments",
       "View all roles",
@@ -36,4 +36,4 @@ addRole = [
   },
 ];
 
-module.exports = { menu, addDept };
+module.exports = { menu, addDept, addRole };

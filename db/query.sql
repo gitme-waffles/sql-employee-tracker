@@ -14,13 +14,17 @@
 -- FROM role AS R
 -- INNER JOIN department AS D ON  R.department_id = D.id;
 
--- SELECT 
---   E.id AS "ID", CONCAT(E.first_name, " ", E.last_name) AS Employee, R.title AS "Job Title", D.name AS "Dept.", R.salary AS Salary, CONCAT(E.first_name, " ", E.last_name) AS Manager
--- FROM employee AS E
--- INNER JOIN employee AS Emp
--- INNER JOIN role AS R ON R.id = E.role_id
--- INNER JOIN department AS D ON  R.department_id = D.id;
+SELECT 
+  E.id AS "ID", CONCAT(E.first_name, " ", E.last_name) AS Employee, R.title AS "Job Title", D.name AS "Dept.", R.salary AS Salary, CONCAT(E.first_name, " ", E.last_name) AS Manager
+FROM employee AS E
+INNER JOIN role AS R ON R.id = E.role_id
+INNER JOIN department AS D ON  R.department_id = D.id;
 
 -- SELECT *
 --     `name` AS `Dept.`, id AS ID
 -- FROM department
+
+SELECT
+    E.first_name AS Employee, M.first_name AS Manager
+FROM employee AS E 
+INNER JOIN manager AS M on M.id = E.manager_id

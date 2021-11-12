@@ -49,7 +49,12 @@ INNER JOIN department AS D ON  R.department_id = D.id;`;
 }
 
 function viewAllEmployees() {
-  const sql = ``;
+  const sql = `SELECT 
+  E.id AS "ID", CONCAT(E.first_name, " ", E.last_name) AS Employee, R.title AS "Job Title", D.name AS Department, R.salary AS Salary, CONCAT(EMP.first_name, " ", EMP.last_name) AS Manager
+FROM employee AS E
+INNER JOIN role AS R ON R.id = E.role_id
+INNER JOIN department AS D ON  R.department_id = D.id
+LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
   db.query(sql, (err, result) => {
     const table = cTable.getTable(result);
     if (err) {

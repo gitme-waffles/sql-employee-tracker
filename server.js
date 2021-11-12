@@ -81,29 +81,35 @@ function addRole() {
   const sql = `SELECT 
   *
   FROM department`;
-  db.query(sql, (err, result) => {
-    // const table = cTable.getTable(result);
-    // result.forEach((element) => {
+  inquirer.prompt(prompts.addRole).then((answers) => {
+    const addRoleData = answers;
+    db.query(sql, (err, result) => {
+      // const table = cTable.getTable(result);
+      // result.forEach((element) => {
       
-      //   console.log(element.name)
+        //   console.log(element.name)
       // })
       if (err) {
         console.error(err);
       } else {
         const dbDeptList = result.map(element => element.name);
-        console.log(dbDeptList);
-      // console.log(table);
+        // console.log(dbDeptList);
+        // console.log(table);
+        
         inquirer.prompt([{
-          type: "list",
-          name: "roleUnderDept",
-          message: "Which department does the role belong to?",
-          choices: dbDeptList,
-        }]).then((answers) => {
-          console.log(answers.roleUnderDept);
-        })
-        // mainMenu();
-    }
-  });
+            type: "list",
+            name: "roleUnderDept",
+            message: "Which department does the role belong to?",
+            choices: dbDeptList,
+          }]).then((answers) => {
+              console.log(answers);
+              console.log(addRoleData);
+              mainMenu();
+            })
+            
+      }
+    });
+  })
 }
 
 function addEmployee() {}

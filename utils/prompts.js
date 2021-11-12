@@ -10,9 +10,30 @@ menu = [
       "Add a department",
       "Add a role",
       "Add an employee",
-      "Exit"
+      "Exit",
     ],
   },
 ];
 
-module.exports = { menu };
+addDept = [
+  {
+    type: "input",
+    name: "newDept",
+    message: "What's the name of the new department?",
+  },
+];
+
+addRole = [
+  {
+    type: "input",
+    name: "newRoleName",
+    message: "What's the name of the new role?",
+  },
+  {
+    type: "input",
+    name: "newRoleSalary",
+    message: "What is the salary of the new role?",
+  },
+];
+
+module.exports = { menu, addDept };

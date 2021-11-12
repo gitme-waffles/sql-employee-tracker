@@ -21,6 +21,6 @@
 -- INNER JOIN role AS R ON R.id = E.role_id
 -- INNER JOIN department AS D ON  R.department_id = D.id;
 
-SELECT *
+-- SELECT *
 --     `name` AS `Dept.`, id AS ID
-FROM department
+-- FROM department

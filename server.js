@@ -87,15 +87,10 @@ function addRole() {
     *
     FROM department`;
     db.query(sql, (err, result) => {
-      // const table = cTable.getTable(result);
-      // result.forEach((element) => {
-
-      //   console.log(element.name)
-      // })
       if (err) {
         console.error(err);
       } else {
-        const dbDeptList = result.map((element) => element.name);
+        const dbDeptList = result.map((department) => department.name);
         inquirer
           .prompt([
             {
@@ -106,11 +101,13 @@ function addRole() {
             },
           ])
           .then((answers) => {
-            const chosenDept  = result.filter(department => department.name == answers.roleUnderDept)
+            const chosenDept = result.filter(
+              (department) => department.name == answers.roleUnderDept
+            );
             // string literal  over 2 lines
             const sql = `INSERT INTO role (title, salary, department_id)
             VALUES		(\"${addRoleData.newRoleName}\", ${addRoleData.newRoleSalary}, ${chosenDept[0].id})`;
-
+            // add to database
             db.query(sql, (err, result) => {
               if (err) {
                 console.error(err);
@@ -126,9 +123,79 @@ function addRole() {
 }
 
 function addEmployee() {
-  inquirer.prompt(prompts.addEmployee).then((answers) => {
-    console.log(answers);
-  })
+  inquirer.prompt(prompts.addEmployee).then((addEmployeeData) => {
+    const sql = `SELECT 
+    R.title AS title, CONCAT(EMP.first_name, " ", EMP.last_name) AS manager, EMP.id AS managersId
+  FROM employee AS E
+  INNER JOIN role AS R ON R.id = E.role_id
+  LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
+    db.query(sql, (err, roleAndManagerData) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // console.log(roleAndManagerData);
+        const dbRoleList = roleAndManagerData.map((role) => role.title);
+        // const dbRoleList = roleAndManagerData.filter(role => role.manager == !null);
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "choiceOfRole",
+              message: "What is the employee's role?",
+              choices: dbRoleList,
+            },
+          ])
+          .then((chosenRole) => {
+            console.log(`ConLog Chosen Role: ` + JSON.stringify(chosenRole));
+          });
+
+        let initManagerList = ["None"];
+        const pulledManagerList = roleAndManagerData.map(
+          (manager) => manager.manager
+        );
+
+        let managerList = initManagerList.concat(
+          pulledManagerList.filter((el) => el != null)
+        );
+        console.log(managerList);
+        // inquirer
+        //   .prompt([
+        //     {
+        //       type: "list",
+        //       name: "choiceOfManager",
+        //       message: "Choose the Manager",
+        //       choices: managerList,
+        //     },
+        //   ])
+        //   .then((answer) => {
+        //     console.log(answer);
+
+        //     let chosenManager = [];
+        //     if (answer.choiceOfManager == "None") {
+        //       chosenManager = null;
+        //     } else {
+        //       chosenManager = result.filter(
+        //         (manager) => manager.manager == answer.choiceOfManager
+        //         );
+        //       }
+        //       console.log(`ConLog epmloyee data: ` + addEmployeeData);
+        //       console.log(`ConLog - manager choice: ` +  JSON.stringify(chosenManager));
+
+        // const sql = ``;
+        // db.query(sql, (err, result) => {
+        //   if (err) {
+        //     console.error(err);
+        //   } else {
+        //     console.log('Success');
+        //   }
+        // })
+
+        // console.log(chosenManager);
+        // }).catch(error => console.log(error))
+        // console.log(pulledManagerList);
+      }
+    });
+  });
 }
 
 function updateEmployeeRole() {

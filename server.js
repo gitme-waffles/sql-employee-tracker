@@ -14,7 +14,7 @@ const db = mysql.createConnection(
     password: "sqlROOT",
     database: "companyEmployees_db",
   },
-  console.log(`Connected to the companyEmployees_db database.`)
+  console.info(`Connected to the companyEmployees_db database.`)
 );
 
 function viewAllDepts() {
@@ -26,7 +26,7 @@ function viewAllDepts() {
     if (err) {
       console.error(err);
     } else {
-      console.log(table);
+      console.info(table);
     }
     mainMenu();
   });
@@ -42,7 +42,7 @@ INNER JOIN department AS D ON  R.department_id = D.id;`;
     if (err) {
       console.error(err);
     } else {
-      console.log(table);
+      console.info(table);
     }
     mainMenu();
   });
@@ -66,7 +66,6 @@ LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
   });
 }
 
-
 function addDept() {
   inquirer.prompt(prompts.addDept).then((answer) => {
     const sql = `INSERT INTO department (name)
@@ -83,60 +82,74 @@ function addDept() {
 }
 
 function addRole() {
-  inquirer.prompt(prompts.addRole).then((answers) => {
-    const addRoleData = answers; // to be inserted into database
+  inquirer.prompt(prompts.addRole).then((addRoleData) => {
     const sql = `SELECT 
     *
     FROM department`;
     db.query(sql, (err, result) => {
       // const table = cTable.getTable(result);
       // result.forEach((element) => {
-      
-        //   console.log(element.name)
+
+      //   console.log(element.name)
       // })
       if (err) {
         console.error(err);
       } else {
-        const dbDeptList = result.map(element => element.name);
+        const dbDeptList = result.map((element) => element.name);
         console.log(`ConLog dbDepList: ` + dbDeptList);
         console.log(`ConLog query result: ` + result.id);
         // console.log(table);
-        
-        inquirer.prompt([{
-            type: "list",
-            name: "roleUnderDept",
-            message: "Which department does the role belong to?",
-            choices: dbDeptList,
-          }]).then((answers) => {
-              console.log(answers);
-              // answers.roleUnderDept = chosen role
-              console.log(addRoleData);
-              // addRoleData.newRoleName
-              // addRoleData.newRoleSalary
-              mainMenu();
-            })
-            
+
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "roleUnderDept",
+              message: "Which department does the role belong to?",
+              choices: dbDeptList,
+            },
+          ])
+          .then((answers) => {
+            // console.log(`ConLog after dbDept Inquiry: ` + JSON.stringify(result));
+            // console.log(result);
+            // check result == roleUnderDept
+            const chosenDept  = result.filter(department => department.name == answers.roleUnderDept)
+            // console.log(chosenDept);
+            chosenDept[0].id
+            addRoleData.newRoleName
+            addRoleData.newRoleSalary
+
+            const sql = `INSERT INTO role (title, salary, department_id)
+            VALUES		(\"${addRoleData.newRoleName}\", ${addRoleData.newRoleSalary}, ${chosenDept[0].id})`;
+            db.query(sql, (err, result) => {
+              if (err) {
+                console.log(err);
+              } else {
+                console.log(`${addRoleData.newRoleName} added to database!`);
+              }
+            });
+            mainMenu();
+          });
       }
     });
-  })
+  });
 }
 
 function addEmployee() {}
 
 function updateEmployeeRole() {
-	// CONCAT(E.first_name, " ", E.last_name)
+  // CONCAT(E.first_name, " ", E.last_name)
   const sql = `SELECT *
-FROM employee AS E;`
+FROM employee AS E;`;
   db.query(sql, (err, result) => {
     if (err) {
       console.log(err);
     } else {
-      const listOfEmployees = result.map(element => element)
+      const listOfEmployees = result.map((element) => element);
       console.log("ConLog db reulst: " + result);
       console.log(listOfEmployees);
-
     }
-  })
+  });
 }
 
 function mainMenu() {
@@ -150,25 +163,26 @@ function mainMenu() {
         viewAllRoles();
         break;
       case "View all employees":
-        viewAllEmployees()
+        viewAllEmployees();
         break;
       case "Add a department":
         addDept();
         break;
       case "Add a role":
-        addRole()
+        addRole();
         break;
       case "Add an employee":
-        addEmployee()
-        break;        
+        addEmployee();
+        break;
       case "Update an employees role":
-        updateEmployeeRole()
-        break;        
-          case "Exit":
-            console.log("Bye!");
-            break;
-          default:
-            break;
+        updateEmployeeRole();
+        break;
+      case "Exit":
+        console.log("Bye!");
+        process.exit();
+        break;
+      default:
+        break;
     }
   });
 }

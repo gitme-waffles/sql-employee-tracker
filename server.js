@@ -96,10 +96,6 @@ function addRole() {
         console.error(err);
       } else {
         const dbDeptList = result.map((element) => element.name);
-        console.log(`ConLog dbDepList: ` + dbDeptList);
-        console.log(`ConLog query result: ` + result.id);
-        // console.log(table);
-
         inquirer
           .prompt([
             {
@@ -110,22 +106,16 @@ function addRole() {
             },
           ])
           .then((answers) => {
-            // console.log(`ConLog after dbDept Inquiry: ` + JSON.stringify(result));
-            // console.log(result);
-            // check result == roleUnderDept
             const chosenDept  = result.filter(department => department.name == answers.roleUnderDept)
-            // console.log(chosenDept);
-            chosenDept[0].id
-            addRoleData.newRoleName
-            addRoleData.newRoleSalary
-
+            // string literal  over 2 lines
             const sql = `INSERT INTO role (title, salary, department_id)
             VALUES		(\"${addRoleData.newRoleName}\", ${addRoleData.newRoleSalary}, ${chosenDept[0].id})`;
+
             db.query(sql, (err, result) => {
               if (err) {
-                console.log(err);
+                console.error(err);
               } else {
-                console.log(`${addRoleData.newRoleName} added to database!`);
+                console.info(`${addRoleData.newRoleName} added to database!`);
               }
             });
             mainMenu();
@@ -135,19 +125,23 @@ function addRole() {
   });
 }
 
-function addEmployee() {}
+function addEmployee() {
+  inquirer.prompt(prompts.addEmployee).then((answers) => {
+    console.log(answers);
+  })
+}
 
 function updateEmployeeRole() {
   // CONCAT(E.first_name, " ", E.last_name)
   const sql = `SELECT *
 FROM employee AS E;`;
   db.query(sql, (err, result) => {
+    console.log(result);
     if (err) {
       console.log(err);
     } else {
       const listOfEmployees = result.map((element) => element);
       console.log("ConLog db reulst: " + result);
-      console.log(listOfEmployees);
     }
   });
 }

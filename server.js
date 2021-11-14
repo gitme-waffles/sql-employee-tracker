@@ -125,10 +125,10 @@ function addRole() {
 function addEmployee() {
   inquirer.prompt(prompts.addEmployee).then((addEmployeeData) => {
     const sql = `SELECT 
-    R.title AS title, CONCAT(EMP.first_name, " ", EMP.last_name) AS manager, EMP.id AS managersId
-  FROM employee AS E
-  INNER JOIN role AS R ON R.id = E.role_id
-  LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
+    R.id AS titleId,  R.title AS title, CONCAT(EMP.first_name, " ", EMP.last_name) AS manager, EMP.id AS managersId
+   FROM employee AS E
+   RIGHT JOIN role AS R ON R.id = E.role_id
+   LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
     db.query(sql, (err, roleAndManagerData) => {
       if (err) {
         console.error(err);
@@ -146,53 +146,58 @@ function addEmployee() {
             },
           ])
           .then((chosenRole) => {
-            console.log(`ConLog Chosen Role: ` + JSON.stringify(chosenRole));
+            let initManagerList = ["None"];
+            const pulledManagerList = roleAndManagerData.map(
+              (manager) => manager.manager
+            );
+
+            let managerList = initManagerList.concat(
+              pulledManagerList.filter((el) => el != null)
+            );
+            // console.log(managerList);
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "choiceOfManager",
+                  message: "Choose the Manager",
+                  choices: managerList,
+                },
+              ])
+              .then((answer) => {
+                let chosenManager = [];
+
+                if (answer.choiceOfManager == "None") {
+                  chosenManager = roleAndManagerData.filter(
+                    (el) => el.title == chosenRole.choiceOfRole
+                  );
+                } else {
+                  chosenManager = roleAndManagerData.filter(
+                    (manager) => manager.manager == answer.choiceOfManager
+                  );
+                }
+                // console.log(
+                //   `ConLog employee data: ` + JSON.stringify(addEmployeeData)
+                // );
+                // console.log(
+                //   `ConLog Chosen Role: ` + JSON.stringify(chosenRole)
+                // );
+                // console.log(
+                //   `ConLog - manager choice: ` + JSON.stringify(chosenManager)
+                // );
+
+                const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)  
+VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosenManager[0].titleId}, ${chosenManager[0].managersId});`;
+                db.query(sql, (err, result) => {
+                  if (err) {
+                    console.error(err);
+                  } else {
+                    console.log(`Employee "${addEmployeeData.firstName} ${addEmployeeData.lastName}", added to the database`);
+                    mainMenu();
+                  }
+                });
+              })
           });
-
-        let initManagerList = ["None"];
-        const pulledManagerList = roleAndManagerData.map(
-          (manager) => manager.manager
-        );
-
-        let managerList = initManagerList.concat(
-          pulledManagerList.filter((el) => el != null)
-        );
-        console.log(managerList);
-        // inquirer
-        //   .prompt([
-        //     {
-        //       type: "list",
-        //       name: "choiceOfManager",
-        //       message: "Choose the Manager",
-        //       choices: managerList,
-        //     },
-        //   ])
-        //   .then((answer) => {
-        //     console.log(answer);
-
-        //     let chosenManager = [];
-        //     if (answer.choiceOfManager == "None") {
-        //       chosenManager = null;
-        //     } else {
-        //       chosenManager = result.filter(
-        //         (manager) => manager.manager == answer.choiceOfManager
-        //         );
-        //       }
-        //       console.log(`ConLog epmloyee data: ` + addEmployeeData);
-        //       console.log(`ConLog - manager choice: ` +  JSON.stringify(chosenManager));
-
-        // const sql = ``;
-        // db.query(sql, (err, result) => {
-        //   if (err) {
-        //     console.error(err);
-        //   } else {
-        //     console.log('Success');
-        //   }
-        // })
-
-        // console.log(chosenManager);
-        // }).catch(error => console.log(error))
-        // console.log(pulledManagerList);
       }
     });
   });

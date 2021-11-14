@@ -196,14 +196,22 @@ VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosen
 function updateEmployeeRole() {
   // CONCAT(E.first_name, " ", E.last_name)
   const sql = `SELECT *
-FROM employee AS E;`;
+FROM employee;`;
   db.query(sql, (err, result) => {
-    console.log(result);
+    // console.log(result);
     if (err) {
       console.log(err);
     } else {
-      const listOfEmployees = result.map((element) => element);
-      console.log("ConLog db reulst: " + result);
+      const listOfEmployees = result.map((employees) => employees.first_name.concat(` ${employees.last_name}`));
+      // console.log("ConLog list: " + JSON.stringify(listOfEmployees));
+      inquirer.prompt([{
+        type: "list",
+        name: "employeToUpdate",
+        message: "Choose an employee to update",
+        choices: listOfEmployees,
+      }]).then((answer) => {
+        console.log(`ConLog answer : `+ JSON.stringify(answer));
+      })
     }
   });
 }

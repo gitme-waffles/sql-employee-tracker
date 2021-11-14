@@ -133,9 +133,7 @@ function addEmployee() {
       if (err) {
         console.error(err);
       } else {
-        // console.log(roleAndManagerData);
         const dbRoleList = roleAndManagerData.map((role) => role.title);
-        // const dbRoleList = roleAndManagerData.filter(role => role.manager == !null);
         inquirer
           .prompt([
             {
@@ -154,7 +152,6 @@ function addEmployee() {
             let managerList = initManagerList.concat(
               pulledManagerList.filter((el) => el != null)
             );
-            // console.log(managerList);
             inquirer
               .prompt([
                 {
@@ -176,15 +173,6 @@ function addEmployee() {
                     (manager) => manager.manager == answer.choiceOfManager
                   );
                 }
-                // console.log(
-                //   `ConLog employee data: ` + JSON.stringify(addEmployeeData)
-                // );
-                // console.log(
-                //   `ConLog Chosen Role: ` + JSON.stringify(chosenRole)
-                // );
-                // console.log(
-                //   `ConLog - manager choice: ` + JSON.stringify(chosenManager)
-                // );
 
                 const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)  
 VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosenManager[0].titleId}, ${chosenManager[0].managersId});`;
@@ -192,11 +180,13 @@ VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosen
                   if (err) {
                     console.error(err);
                   } else {
-                    console.log(`Employee "${addEmployeeData.firstName} ${addEmployeeData.lastName}", added to the database`);
+                    console.log(
+                      `Employee "${addEmployeeData.firstName} ${addEmployeeData.lastName}", added to the database`
+                    );
                     mainMenu();
                   }
                 });
-              })
+              });
           });
       }
     });

@@ -33,7 +33,7 @@ SOURCE db/schema.sql;
 
 Run the following command to populate the database with provided data:
 ```
-SOURCE db/schema/sql;
+SOURCE db/seeds.sql;
 ```
 
 ## Usage 

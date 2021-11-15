@@ -60,7 +60,7 @@ Now you can finally run the following command in the next line to start the appl
 ```
 npm start
 ```
-[CLI Walkthrough](https://watch.screencastify.com/v/NNpxhpsv9Ry1mJkaxvoV)
+Here is a [CLI Walkthrough](https://watch.screencastify.com/v/NNpxhpsv9Ry1mJkaxvoV) once everything is set up
 
 ## Questions
 Contact me on [Github](https://github.com/gitme-waffles) if you have any questions  

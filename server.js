@@ -72,9 +72,9 @@ function addDept() {
     VALUES  ("${answer.newDept}");`;
     db.query(sql, (err, result) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
-        console.log(answer.newDept + "department added!");
+        console.info(answer.newDept + "department added!");
       }
     });
     mainMenu();
@@ -180,7 +180,7 @@ VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosen
                   if (err) {
                     console.error(err);
                   } else {
-                    console.log(
+                    console.info(
                       `Employee "${addEmployeeData.firstName} ${addEmployeeData.lastName}", added to the database`
                     );
                     mainMenu();
@@ -200,7 +200,7 @@ FROM employee E
 JOIN role AS R ON R.id = E.role_id;`;
   db.query(sql, (err, pulledEmployeeData) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
       const listOfEmployees = pulledEmployeeData.map(
         (employees) => employees.employee
@@ -215,9 +215,6 @@ JOIN role AS R ON R.id = E.role_id;`;
           },
         ])
         .then((chosenEmployee) => {
-          console.log(
-            `ConLog chosenEmployee : ` + JSON.stringify(chosenEmployee)
-          );
           const sql = `SELECT * FROM role;`;
           db.query(sql, (err, pulledRoleData) => {
             if (err) {
@@ -250,7 +247,7 @@ JOIN role AS R ON R.id = E.role_id;`;
                     if (err) {
                       console.error(err);
                     } else {
-                      console.log(
+                      console.info(
                         `The role of ${filteredEmployee[0].employee} has been updated to ${updatedRole[0].title}`
                       );
                     }
@@ -290,7 +287,7 @@ function mainMenu() {
         updateEmployeeRole();
         break;
       case "Exit":
-        console.log("Bye!");
+        console.info("Bye!");
         process.exit();
         break;
       default:

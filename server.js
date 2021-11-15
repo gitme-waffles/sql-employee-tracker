@@ -163,7 +163,7 @@ function addEmployee() {
               ])
               .then((answer) => {
                 let chosenManager = [];
-
+                // if "None" is chosen get all data by role
                 if (answer.choiceOfManager == "None") {
                   chosenManager = roleAndManagerData.filter(
                     (el) => el.title == chosenRole.choiceOfRole
@@ -195,23 +195,84 @@ VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosen
 
 function updateEmployeeRole() {
   // CONCAT(E.first_name, " ", E.last_name)
-  const sql = `SELECT *
-FROM employee;`;
-  db.query(sql, (err, result) => {
-    // console.log(result);
+  const sql = `SELECT 
+	E.id id, CONCAT(E.first_name, " ", E.last_name) AS employee, E.role_id AS roleId
+FROM employee E
+JOIN role AS R ON R.id = E.role_id;`;
+  db.query(sql, (err, pulledEmployeeData) => {
+    // console.log(pulledEmployeeData);
     if (err) {
       console.log(err);
     } else {
-      const listOfEmployees = result.map((employees) => employees.first_name.concat(` ${employees.last_name}`));
+      const listOfEmployees = pulledEmployeeData.map(
+        (employees) => employees.employee
+      );
       // console.log("ConLog list: " + JSON.stringify(listOfEmployees));
-      inquirer.prompt([{
-        type: "list",
-        name: "employeToUpdate",
-        message: "Choose an employee to update",
-        choices: listOfEmployees,
-      }]).then((answer) => {
-        console.log(`ConLog answer : `+ JSON.stringify(answer));
-      })
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employeeToUpdate",
+            message: "Which employee's role do you want to update",
+            choices: listOfEmployees,
+          },
+        ])
+        .then((chosenEmployee) => {
+          console.log(
+            `ConLog chosenEmployee : ` + JSON.stringify(chosenEmployee)
+          );
+          // console.log(pulledEmployeeData);
+          const sql = `SELECT * FROM role;`;
+          db.query(sql, (err, pulledRoleData) => {
+            if (err) {
+              console.error(err);
+            } else {
+              const pulledRoleList = pulledRoleData.map((role) => role.title);
+              // console.log(`ConLog role list: `+pulledRoleList);
+              inquirer
+                .prompt([
+                  {
+                    type: "list",
+                    name: "selectedRole",
+                    message:
+                      "Which role do you want to assign the selected employee?",
+                    choices: pulledRoleList,
+                  },
+                ])
+                .then((choiceOfRole) => {
+                  // console.log(choiceOfRole);
+                  const updatedRole = pulledRoleData.filter(
+                    (role) => role.title == choiceOfRole.selectedRole
+                  );
+                  const filteredEmployee = pulledEmployeeData.filter(
+                    (employee) =>
+                      // console.log(employee.employee)
+                      employee.employee == chosenEmployee.employeeToUpdate
+                  );
+
+                  const sql = `UPDATE employee
+                  SET role_id = ${updatedRole[0].id}
+                  WHERE id = ${filteredEmployee[0].id};`;
+                  db.query(sql, (err, result) => {
+                    if (err) {
+                      console.error(err);
+                    } else {
+                      console.log(
+                        `The role of ${filteredEmployee[0].employee} has been updated to ${updatedRole[0].title}`
+                      );
+                    }
+                  });
+                  mainMenu();
+
+                  // console.log(`ConLog pulled EMP data: ` + JSON.stringify(updatedRole));
+                  // console.log(
+                  //   `ConLog chosen Employee: ` + JSON.stringify(filteredEmployee)
+
+                  // );
+                });
+            }
+          });
+        });
     }
   });
 }

@@ -36,6 +36,9 @@ Run the following command to populate the database with provided data:
 SOURCE db/seeds.sql;
 ```
 
+[sql-init](https://user-images.githubusercontent.com/85494162/141780484-43f87ba3-571e-4dc4-bf07-6f54f496414c.mp4)
+
+
 ## Usage 
 
 ### Input MySQL credentials

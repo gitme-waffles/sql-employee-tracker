@@ -127,7 +127,7 @@ function addRole() {
 function addEmployee() {
   inquirer.prompt(prompts.addEmployee).then((addEmployeeData) => {
     const sql = `SELECT 
-    R.id AS titleId,  R.title AS title, CONCAT(EMP.first_name, " ", EMP.last_name) AS manager, EMP.id AS managersId
+    R.id AS titleId,  R.title AS title, CONCAT(E.first_name, " ", E.last_name) AS manager, E.id AS managersId
    FROM employee AS E
    RIGHT JOIN role AS R ON R.id = E.role_id
    LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;`;
@@ -135,7 +135,10 @@ function addEmployee() {
       if (err) {
         console.error(err);
       } else {
-        const dbRoleList = roleAndManagerData.map((role) => role.title);
+        // filter duplicates
+        const chars = roleAndManagerData.map((role) => role.title);
+        const dbRoleList = [...new Set(chars)]
+        console.log(dbRoleList);
         inquirer
           .prompt([
             {

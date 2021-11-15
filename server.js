@@ -194,20 +194,17 @@ VALUES  ("${addEmployeeData.firstName}", "${addEmployeeData.lastName}", ${chosen
 }
 
 function updateEmployeeRole() {
-  // CONCAT(E.first_name, " ", E.last_name)
   const sql = `SELECT 
 	E.id id, CONCAT(E.first_name, " ", E.last_name) AS employee, E.role_id AS roleId
 FROM employee E
 JOIN role AS R ON R.id = E.role_id;`;
   db.query(sql, (err, pulledEmployeeData) => {
-    // console.log(pulledEmployeeData);
     if (err) {
       console.log(err);
     } else {
       const listOfEmployees = pulledEmployeeData.map(
         (employees) => employees.employee
       );
-      // console.log("ConLog list: " + JSON.stringify(listOfEmployees));
       inquirer
         .prompt([
           {
@@ -221,14 +218,12 @@ JOIN role AS R ON R.id = E.role_id;`;
           console.log(
             `ConLog chosenEmployee : ` + JSON.stringify(chosenEmployee)
           );
-          // console.log(pulledEmployeeData);
           const sql = `SELECT * FROM role;`;
           db.query(sql, (err, pulledRoleData) => {
             if (err) {
               console.error(err);
             } else {
               const pulledRoleList = pulledRoleData.map((role) => role.title);
-              // console.log(`ConLog role list: `+pulledRoleList);
               inquirer
                 .prompt([
                   {
@@ -240,13 +235,11 @@ JOIN role AS R ON R.id = E.role_id;`;
                   },
                 ])
                 .then((choiceOfRole) => {
-                  // console.log(choiceOfRole);
                   const updatedRole = pulledRoleData.filter(
                     (role) => role.title == choiceOfRole.selectedRole
                   );
                   const filteredEmployee = pulledEmployeeData.filter(
                     (employee) =>
-                      // console.log(employee.employee)
                       employee.employee == chosenEmployee.employeeToUpdate
                   );
 
@@ -263,12 +256,6 @@ JOIN role AS R ON R.id = E.role_id;`;
                     }
                   });
                   mainMenu();
-
-                  // console.log(`ConLog pulled EMP data: ` + JSON.stringify(updatedRole));
-                  // console.log(
-                  //   `ConLog chosen Employee: ` + JSON.stringify(filteredEmployee)
-
-                  // );
                 });
             }
           });

@@ -47,6 +47,13 @@
 -- RIGHT JOIN role AS R ON R.id = E.role_id
 -- LEFT JOIN employee AS EMP ON EMP.id = E.manager_id;
 
-UPDATE [table]
-SET [key] = "Candide"
-WHERE id = 2;
+-- UPDATE [table]
+-- SET [key] = "Candide"
+-- WHERE id = 2;
+
+      --  *** FULL OUTER JOIN ***
+SELECT 
+ R.id AS id,  R.title AS title, CONCAT(E.first_name, " ", E.last_name) AS employee, E.id AS employeeId
+FROM employee AS E
+FULL OUTER JOIN role AS R ON R.id = E.role_id
+ORDER BY R.id;

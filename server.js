@@ -10,8 +10,10 @@ const prompts = require("./utils/prompts");
 const db = mysql.createConnection(
   {
     host: "localhost",
-    user: "root",
-    password: "sqlROOT",
+    // ADD YOUR USERNAME
+    user: "",
+    // ADD YOUR PASSWORD
+    password: "",
     database: "companyEmployees_db",
   },
   console.info(`Connected to the companyEmployees_db database.`)
@@ -263,7 +265,6 @@ JOIN role AS R ON R.id = E.role_id;`;
 
 function mainMenu() {
   inquirer.prompt(prompts.menu).then((answers) => {
-    // console.log(answers);
     switch (answers.menuOption) {
       case "View all departments":
         viewAllDepts();
